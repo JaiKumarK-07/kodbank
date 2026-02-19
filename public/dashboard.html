@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KodBank - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>KodBank</h1>
+      <h2 id="welcome">Welcome!</h2>
+      <button id="checkBalanceBtn" class="balance-btn">Check Balance</button>
+      <div id="balanceDisplay"></div>
+    </div>
+  </div>
+
+  <div id="celebration" class="celebration"></div>
+
+  <script>
+    async function loadUser() {
+      try {
+        const response = await fetch('/api/user');
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('welcome').textContent = `Welcome, ${data.username}!`;
+        } else {
+          window.location.href = 'login.html';
+        }
+      } catch (error) {
+        window.location.href = 'login.html';
+      }
+    }
+
+    document.getElementById('checkBalanceBtn').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/balance');
+        const data = await response.json();
+        
+        if (response.ok) {
+          document.getElementById('balanceDisplay').innerHTML = 
+            `<p class="balance-text">Your balance is: ₹${data.balance.toLocaleString()}</p>`;
+          
+          showCelebration();
+        } else {
+          document.getElementById('balanceDisplay').innerHTML = 
+            `<p class="error">${data.error}</p>`;
+        }
+      } catch (error) {
+        document.getElementById('balanceDisplay').innerHTML = 
+          '<p class="error">Failed to fetch balance</p>';
+      }
+    });
+
+    function showCelebration() {
+      const celebration = document.getElementById('celebration');
+      celebration.innerHTML = '';
+      
+      for (let i = 0; i < 50; i++) {
+        const emoji = document.createElement('div');
+        emoji.className = 'emoji';
+        emoji.textContent = '🎉';
+        emoji.style.left = Math.random() * 100 + '%';
+        emoji.style.animationDelay = Math.random() * 2 + 's';
+        emoji.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        celebration.appendChild(emoji);
+      }
+      
+      setTimeout(() => {
+        celebration.innerHTML = '';
+      }, 5000);
+    }
+
+    loadUser();
+  </script>
+</body>
+</html>
