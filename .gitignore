@@ -1,0 +1,4 @@
+node_modules/
+kodbank.db
+.env
+.vscode/
